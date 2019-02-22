@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Web_HW03.Models;
 
 namespace Web_HW03.Data
 {
@@ -12,5 +13,7 @@ namespace Web_HW03.Data
             : base(options)
         {
         }
+
+        public DbSet<BlogPost> BlogPosts { get; set; }
     }
 }
