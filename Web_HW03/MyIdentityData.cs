@@ -21,7 +21,7 @@ namespace Web_HW03
                 if (role == null)
                 {
                     role = new IdentityRole(roleName);
-                    var result = roleManager.CreateAsync(role).Result;
+                    roleManager.CreateAsync(role).GetAwaiter().GetResult();
                 }
             }
 
@@ -32,19 +32,19 @@ namespace Web_HW03
                 {
                     user = new IdentityUser(userName);
                     user.Email = userName;
-                    var result = userManager.CreateAsync(user, "P@ssword1").Result;
+                    userManager.CreateAsync(user, "P@ssword1").GetAwaiter().GetResult();
                 }
                 if (userName.StartsWith("admin"))
                 {
-                    var result2 = userManager.AddToRoleAsync(user, AdminRoleName).Result;
+                    userManager.AddToRoleAsync(user, AdminRoleName).GetAwaiter().GetResult();
                 }
                 if (userName.StartsWith("editor"))
                 {
-                    var result3 = userManager.AddToRoleAsync(user, EditorRoleName).Result;
+                    userManager.AddToRoleAsync(user, EditorRoleName).GetAwaiter().GetResult();
                 }
                 if (userName.StartsWith("contributor"))
                 {
-                    var result4 = userManager.AddToRoleAsync(user, ContributorRoleName).Result;
+                    userManager.AddToRoleAsync(user, ContributorRoleName).GetAwaiter().GetResult();
                 }
             }
         }
