@@ -1,5 +1,9 @@
 ﻿@model Web_HW03.Models.BlogPost
-
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService Authorization
+@{ 
+    var canEdit = (await Authorization.AuthorizeAsync(User, MyIdentityData.BlogPolicy_Edit)).Succeeded;
+}
 @{
     ViewData["Title"] = "Details";
 }
@@ -31,6 +35,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    @if (canEdit)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

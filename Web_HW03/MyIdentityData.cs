@@ -3,11 +3,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Web_HW03
 {
-    internal class MyIdentityData
+    public class MyIdentityData
     {
         public const string AdminRoleName = "Admin";
         public const string EditorRoleName = "Editor";
         public const string ContributorRoleName = "Contributor";
+        
+        public const string BlogPolicy_Add = "CanAddBlogPosts";
+        public const string BlogPolicy_Edit = "CanEditBlogPosts";
+        public const string BlogPolicy_Delete = "CanDeleteBlogPosts";
 
         internal static void SeedData(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {

@@ -50,9 +50,9 @@ namespace Web_HW03
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("CanAddBlogPosts", policy => policy.RequireRole(MyIdentityData.AdminRoleName, MyIdentityData.EditorRoleName, MyIdentityData.ContributorRoleName));
-                options.AddPolicy("CanEditBlogPosts", policy => policy.RequireRole(MyIdentityData.AdminRoleName, MyIdentityData.EditorRoleName));
-                options.AddPolicy("CanDeleteBlogPosts", policy => policy.RequireRole(MyIdentityData.AdminRoleName));
+                options.AddPolicy(MyIdentityData.BlogPolicy_Add, policy => policy.RequireRole(MyIdentityData.AdminRoleName, MyIdentityData.EditorRoleName, MyIdentityData.ContributorRoleName));
+                options.AddPolicy(MyIdentityData.BlogPolicy_Edit, policy => policy.RequireRole(MyIdentityData.AdminRoleName, MyIdentityData.EditorRoleName));
+                options.AddPolicy(MyIdentityData.BlogPolicy_Delete, policy => policy.RequireRole(MyIdentityData.AdminRoleName));
             });
 
 
