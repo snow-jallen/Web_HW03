@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Web_HW03.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Web_HW03
 {
@@ -55,7 +56,8 @@ namespace Web_HW03
             });
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

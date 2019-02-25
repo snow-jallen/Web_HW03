@@ -38,7 +38,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                    <a asp-action="Friendly" asp-route-slug="@item.URLFriendly">@item.Title</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Body)
@@ -47,7 +47,6 @@
                     @Html.DisplayFor(modelItem => item.Posted)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     @if (canEdit)
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>

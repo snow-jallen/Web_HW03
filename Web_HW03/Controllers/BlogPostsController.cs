@@ -27,7 +27,20 @@ namespace Web_HW03.Controllers
             return View(await _context.BlogPosts.ToListAsync());
         }
 
+        [HttpGet("friendly/{*slug}")]
+        public async Task<IActionResult> Friendly(string slug)
+        {
+            var match = await _context.BlogPosts
+                .Include(p => p.PostTags)
+                .ThenInclude(pt => pt.Tag)
+                .FirstOrDefaultAsync(p => p.URLFriendly == slug);
+            if (match == null)
+                return NotFound();
+            return View("Details", match);
+        }
+
         // GET: BlogPosts/Details/5
+        [HttpGet("posts/{id}")]        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

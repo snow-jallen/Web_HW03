@@ -18,7 +18,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@item.Post.Id">@item.Post.Title</a>
+                <a asp-controller="BlogPosts" asp-action="Friendly" asp-route-slug="@item.Post.URLFriendly">@item.Post.Title</a>
                 <p>@item.Post.Body?.Substring(0,Math.Min((item.Post.Body??"").Length, 50))</p>
             </td>
         </tr>
