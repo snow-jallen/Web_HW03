@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Web_HW03.Models.PostTag>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Posts tagged @Model.First().Tag.TagName</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Post)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@item.Post.Id">@item.Post.Title</a>
+                <p>@item.Post.Body?.Substring(0,Math.Min((item.Post.Body??"").Length, 50))</p>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

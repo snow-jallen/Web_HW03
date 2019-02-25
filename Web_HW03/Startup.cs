@@ -87,7 +87,7 @@ namespace Web_HW03
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=BlogPosts}/{action=Index}/{id?}");
             });
         }
     }

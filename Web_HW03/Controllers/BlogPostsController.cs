@@ -36,6 +36,8 @@ namespace Web_HW03.Controllers
             }
 
             var blogPost = await _context.BlogPosts
+                .Include(p=>p.PostTags)
+                .ThenInclude(pt=>pt.Tag)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
@@ -92,7 +94,7 @@ namespace Web_HW03.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = MyIdentityData.BlogPolicy_Edit)]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Posted")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Posted,TagsString")] BlogPost blogPost)
         {
             if (id != blogPost.Id)
             {
@@ -103,6 +105,18 @@ namespace Web_HW03.Controllers
             {
                 try
                 {
+                    if(!String.IsNullOrWhiteSpace(blogPost.TagsString))
+                    {
+                        blogPost.PostTags = new List<PostTag>();
+                        foreach(var tagText in blogPost.TagsString.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var tag = _context.Tags.Where(t => t.TagName == tagText).FirstOrDefault();
+                            if (tag == null)
+                                tag = new Tag { TagName = tagText };
+
+                            blogPost.PostTags.Add(new PostTag {PostId=blogPost.Id, Tag=tag });
+                        }
+                    }
                     _context.Update(blogPost);
                     await _context.SaveChangesAsync();
                 }

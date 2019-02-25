@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web_HW03.Data;
 
 namespace Web_HW03.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225203033_try2_at_tags")]
+    partial class try2_at_tags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,26 +192,15 @@ namespace Web_HW03.Data.Migrations
 
                     b.Property<DateTime>("Posted");
 
+                    b.Property<int?>("TagId");
+
                     b.Property<string>("Title");
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlogPosts");
-                });
-
-            modelBuilder.Entity("Web_HW03.Models.PostTag", b =>
-                {
-                    b.Property<int>("PostId");
-
-                    b.Property<int>("TagId");
-
-                    b.Property<int>("Id");
-
-                    b.HasKey("PostId", "TagId");
-
                     b.HasIndex("TagId");
 
-                    b.ToTable("PostTag");
+                    b.ToTable("BlogPosts");
                 });
 
             modelBuilder.Entity("Web_HW03.Models.Tag", b =>
@@ -218,9 +209,13 @@ namespace Web_HW03.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("BlogPostId");
+
                     b.Property<string>("TagName");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BlogPostId");
 
                     b.ToTable("Tags");
                 });
@@ -270,17 +265,18 @@ namespace Web_HW03.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Web_HW03.Models.PostTag", b =>
+            modelBuilder.Entity("Web_HW03.Models.BlogPost", b =>
                 {
-                    b.HasOne("Web_HW03.Models.BlogPost", "Post")
-                        .WithMany("PostTags")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("Web_HW03.Models.Tag")
+                        .WithMany("Posts")
+                        .HasForeignKey("TagId");
+                });
 
-                    b.HasOne("Web_HW03.Models.Tag", "Tag")
-                        .WithMany("PostTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity("Web_HW03.Models.Tag", b =>
+                {
+                    b.HasOne("Web_HW03.Models.BlogPost")
+                        .WithMany("Tags")
+                        .HasForeignKey("BlogPostId");
                 });
 #pragma warning restore 612, 618
         }

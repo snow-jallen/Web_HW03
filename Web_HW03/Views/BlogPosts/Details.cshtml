@@ -32,6 +32,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Posted)
         </dd>
+        <dd class="col-sm-10">            
+            <strong>Tags</strong>
+            @if (Model.PostTags != null && Model.PostTags.Any())
+            {
+                <ul>
+                @foreach (var postTag in Model.PostTags)
+                {
+                    <li><a asp-controller="Tags" asp-action="TagList" asp-route-id="@postTag.TagId">@postTag.Tag.TagName</a></li>
+                }
+                </ul>
+            }
+        </dd>
     </dl>
 </div>
 <div>
