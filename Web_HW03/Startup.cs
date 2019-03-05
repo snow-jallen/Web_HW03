@@ -14,6 +14,7 @@ using Web_HW03.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace Web_HW03
 {
@@ -37,8 +38,7 @@ namespace Web_HW03
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite("Data Source=myappdata.sqlite"));
 
             //services.AddDefaultIdentity<IdentityUser>()                
             //    .AddDefaultUI(UIFramework.Bootstrap4)
