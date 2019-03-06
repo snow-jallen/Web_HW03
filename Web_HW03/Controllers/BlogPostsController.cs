@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,13 @@ namespace Web_HW03.Controllers
     public class BlogPostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHostingEnvironment hostingEnvironment;
 
-        public BlogPostsController(ApplicationDbContext context)
+        public BlogPostsController(ApplicationDbContext context,
+                                   IHostingEnvironment hostingEnvironment)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            this.hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
         }
 
         // GET: BlogPosts
@@ -39,6 +43,26 @@ namespace Web_HW03.Controllers
             if (match == null)
                 return NotFound();
             return View("Details", match);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImageUpload(IFormFile image)
+        {
+            if (image != null && image.Length > 0)
+            {
+                var file = image;
+                //There is an error here
+                var uploads = Path.Combine(hostingEnvironment.WebRootPath, "uploads\\img");
+                if (file.Length > 0)
+                {
+                    var fileName = $"{BlogPost.MakeFriendly(Path.GetFileNameWithoutExtension(file.FileName))}.{Path.GetExtension(file.FileName)}";
+                    using (var fileStream = new FileStream(Path.Combine(uploads, fileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
+            }
+            return View();
         }
 
         // GET: BlogPosts/Details/5

@@ -39,11 +39,22 @@
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ImageUpload" enctype="multipart/form-data">
+            <label asp-for="Image" class="control-label"></label>
+            <input asp-for="Image" type="file" />
+            <div class="form-group">
+                <input type="submit" value="Upload Image" class="btn btn-info" />
+            </div>
+        </form>
+    </div>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
