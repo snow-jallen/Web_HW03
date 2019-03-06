@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -73,10 +75,11 @@ namespace Web_HW03.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = MyIdentityData.BlogPolicy_Add)]
-        public async Task<IActionResult> Create([Bind("Id,Title,Body,Posted")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Body")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
+                blogPost.Posted = DateTime.Now;
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -107,7 +110,7 @@ namespace Web_HW03.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = MyIdentityData.BlogPolicy_Edit)]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Posted,TagsString")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Image,TagsString")] BlogPost blogPost, IFormFile image)
         {
             if (id != blogPost.Id)
             {
@@ -118,7 +121,14 @@ namespace Web_HW03.Controllers
             {
                 try
                 {
-                    if(!String.IsNullOrWhiteSpace(blogPost.TagsString))
+                    if (image != null)
+                    {
+                        var stream = new MemoryStream();
+                        await image.CopyToAsync(stream);
+                        blogPost.Image = stream.ToArray();
+                    }
+
+                    if (!String.IsNullOrWhiteSpace(blogPost.TagsString))
                     {
                         blogPost.PostTags = new List<PostTag>();
                         foreach(var tagText in blogPost.TagsString.Split(' ', StringSplitOptions.RemoveEmptyEntries))

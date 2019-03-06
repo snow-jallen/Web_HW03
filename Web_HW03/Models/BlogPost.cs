@@ -13,6 +13,7 @@ namespace Web_HW03.Models
         public string Title { get; set; }
         public string Body { get; set; }
         public DateTime Posted { get; set; }
+        public byte[] Image { get; set; }
         public List<PostTag> PostTags { get; set; }
         [NotMapped]
         public string TagsString { get; set; }
