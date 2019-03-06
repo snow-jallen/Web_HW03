@@ -19,12 +19,14 @@ namespace Web_HW03.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IHostingEnvironment hostingEnvironment;
+        private readonly string uploadsPath;
 
         public BlogPostsController(ApplicationDbContext context,
                                    IHostingEnvironment hostingEnvironment)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             this.hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            uploadsPath = Path.Combine(hostingEnvironment.WebRootPath, "img");
         }
 
         // GET: BlogPosts
@@ -52,17 +54,16 @@ namespace Web_HW03.Controllers
             {
                 var file = image;
                 //There is an error here
-                var uploads = Path.Combine(hostingEnvironment.WebRootPath, "uploads\\img");
                 if (file.Length > 0)
                 {
                     var fileName = $"{BlogPost.MakeFriendly(Path.GetFileNameWithoutExtension(file.FileName))}.{Path.GetExtension(file.FileName)}";
-                    using (var fileStream = new FileStream(Path.Combine(uploads, fileName), FileMode.Create))
+                    using (var fileStream = new FileStream(Path.Combine(uploadsPath, fileName), FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
                 }
             }
-            return View();
+            return View("Edit");
         }
 
         // GET: BlogPosts/Details/5
@@ -125,7 +126,14 @@ namespace Web_HW03.Controllers
             {
                 return NotFound();
             }
-            return View(blogPost);
+            var view = View(blogPost);
+            view.ViewData["images"] = Directory.GetFiles(uploadsPath).Select(f=>
+            {
+                var file = new FileInfo(f);
+                return "/img/" + file.Name;
+            });
+
+            return view;
         }
 
         // POST: BlogPosts/Edit/5
