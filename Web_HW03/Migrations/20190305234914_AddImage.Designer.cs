@@ -2,24 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web_HW03.Data;
 
-namespace Web_HW03.Data.Migrations
+namespace Web_HW03.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190225203033_try2_at_tags")]
-    partial class try2_at_tags
+    [Migration("20190305234914_AddImage")]
+    partial class AddImage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -39,8 +36,7 @@ namespace Web_HW03.Data.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -48,8 +44,7 @@ namespace Web_HW03.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClaimType");
 
@@ -110,8 +105,7 @@ namespace Web_HW03.Data.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -119,8 +113,7 @@ namespace Web_HW03.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClaimType");
 
@@ -185,37 +178,44 @@ namespace Web_HW03.Data.Migrations
             modelBuilder.Entity("Web_HW03.Models.BlogPost", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Body");
 
-                    b.Property<DateTime>("Posted");
+                    b.Property<byte[]>("Image");
 
-                    b.Property<int?>("TagId");
+                    b.Property<DateTime>("Posted");
 
                     b.Property<string>("Title");
 
                     b.HasKey("Id");
 
+                    b.ToTable("BlogPosts");
+                });
+
+            modelBuilder.Entity("Web_HW03.Models.PostTag", b =>
+                {
+                    b.Property<int>("PostId");
+
+                    b.Property<int>("TagId");
+
+                    b.Property<int>("Id");
+
+                    b.HasKey("PostId", "TagId");
+
                     b.HasIndex("TagId");
 
-                    b.ToTable("BlogPosts");
+                    b.ToTable("PostTag");
                 });
 
             modelBuilder.Entity("Web_HW03.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("BlogPostId");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("TagName");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BlogPostId");
 
                     b.ToTable("Tags");
                 });
@@ -265,18 +265,17 @@ namespace Web_HW03.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Web_HW03.Models.BlogPost", b =>
+            modelBuilder.Entity("Web_HW03.Models.PostTag", b =>
                 {
-                    b.HasOne("Web_HW03.Models.Tag")
-                        .WithMany("Posts")
-                        .HasForeignKey("TagId");
-                });
+                    b.HasOne("Web_HW03.Models.BlogPost", "Post")
+                        .WithMany("PostTags")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity("Web_HW03.Models.Tag", b =>
-                {
-                    b.HasOne("Web_HW03.Models.BlogPost")
-                        .WithMany("Tags")
-                        .HasForeignKey("BlogPostId");
+                    b.HasOne("Web_HW03.Models.Tag", "Tag")
+                        .WithMany("PostTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

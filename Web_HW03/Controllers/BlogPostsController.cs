@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,10 +18,15 @@ namespace Web_HW03.Controllers
     public class BlogPostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHostingEnvironment hostingEnvironment;
+        private readonly string uploadsPath;
 
-        public BlogPostsController(ApplicationDbContext context)
+        public BlogPostsController(ApplicationDbContext context,
+                                   IHostingEnvironment hostingEnvironment)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            this.hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            uploadsPath = Path.Combine(hostingEnvironment.WebRootPath, "img");
         }
 
         // GET: BlogPosts
@@ -37,6 +45,25 @@ namespace Web_HW03.Controllers
             if (match == null)
                 return NotFound();
             return View("Details", match);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImageUpload(IFormFile image)
+        {
+            if (image != null && image.Length > 0)
+            {
+                var file = image;
+                //There is an error here
+                if (file.Length > 0)
+                {
+                    var fileName = $"{BlogPost.MakeFriendly(Path.GetFileNameWithoutExtension(file.FileName))}.{Path.GetExtension(file.FileName)}";
+                    using (var fileStream = new FileStream(Path.Combine(uploadsPath, fileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
+            }
+            return View("Edit");
         }
 
         // GET: BlogPosts/Details/5
@@ -73,10 +100,11 @@ namespace Web_HW03.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = MyIdentityData.BlogPolicy_Add)]
-        public async Task<IActionResult> Create([Bind("Id,Title,Body,Posted")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Body")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
+                blogPost.Posted = DateTime.Now;
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -98,7 +126,14 @@ namespace Web_HW03.Controllers
             {
                 return NotFound();
             }
-            return View(blogPost);
+            var view = View(blogPost);
+            view.ViewData["images"] = Directory.GetFiles(uploadsPath).Select(f=>
+            {
+                var file = new FileInfo(f);
+                return "/img/" + file.Name;
+            });
+
+            return view;
         }
 
         // POST: BlogPosts/Edit/5
@@ -107,7 +142,7 @@ namespace Web_HW03.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = MyIdentityData.BlogPolicy_Edit)]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Posted,TagsString")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Image,TagsString")] BlogPost blogPost, IFormFile image)
         {
             if (id != blogPost.Id)
             {
@@ -118,7 +153,14 @@ namespace Web_HW03.Controllers
             {
                 try
                 {
-                    if(!String.IsNullOrWhiteSpace(blogPost.TagsString))
+                    if (image != null)
+                    {
+                        var stream = new MemoryStream();
+                        await image.CopyToAsync(stream);
+                        blogPost.Image = stream.ToArray();
+                    }
+
+                    if (!String.IsNullOrWhiteSpace(blogPost.TagsString))
                     {
                         blogPost.PostTags = new List<PostTag>();
                         foreach(var tagText in blogPost.TagsString.Split(' ', StringSplitOptions.RemoveEmptyEntries))

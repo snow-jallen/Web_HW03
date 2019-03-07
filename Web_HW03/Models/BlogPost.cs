@@ -10,9 +10,10 @@ namespace Web_HW03.Models
     public class BlogPost
     {
         public int Id { get; set; }
-        public string Title { get; set; }
+        public string Title { get; set; }        
         public string Body { get; set; }
         public DateTime Posted { get; set; }
+        public byte[] Image { get; set; }
         public List<PostTag> PostTags { get; set; }
         [NotMapped]
         public string TagsString { get; set; }
@@ -27,51 +28,56 @@ namespace Web_HW03.Models
         {
             get
             {
-                if (Title == null) return "";
-
-                const int maxlen = 80;
-                int len = Title.Length;
-                bool prevdash = false;
-                var sb = new StringBuilder(len);
-                char c;
-
-                for (int i = 0; i < len; i++)
-                {
-                    c = Title[i];
-                    if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
-                    {
-                        sb.Append(c);
-                        prevdash = false;
-                    }
-                    else if (c >= 'A' && c <= 'Z')
-                    {
-                        // tricky way to convert to lowercase
-                        sb.Append((char)(c | 32));
-                        prevdash = false;
-                    }
-                    else if (c == ' ' || c == ',' || c == '.' || c == '/' ||
-                        c == '\\' || c == '-' || c == '_' || c == '=')
-                    {
-                        if (!prevdash && sb.Length > 0)
-                        {
-                            sb.Append('-');
-                            prevdash = true;
-                        }
-                    }
-                    else if ((int)c >= 128)
-                    {
-                        int prevlen = sb.Length;
-                        sb.Append(RemapInternationalCharToAscii(c));
-                        if (prevlen != sb.Length) prevdash = false;
-                    }
-                    if (i == maxlen) break;
-                }
-
-                if (prevdash)
-                    return sb.ToString().Substring(0, sb.Length - 1);
-                else
-                    return sb.ToString();
+                return MakeFriendly(Title);
             }
+        }
+
+        public static string MakeFriendly(string text)
+        {
+            if (text == null) return "";
+
+            const int maxlen = 80;
+            int len = text.Length;
+            bool prevdash = false;
+            var sb = new StringBuilder(len);
+            char c;
+
+            for (int i = 0; i < len; i++)
+            {
+                c = text[i];
+                if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
+                {
+                    sb.Append(c);
+                    prevdash = false;
+                }
+                else if (c >= 'A' && c <= 'Z')
+                {
+                    // tricky way to convert to lowercase
+                    sb.Append((char)(c | 32));
+                    prevdash = false;
+                }
+                else if (c == ' ' || c == ',' || c == '.' || c == '/' ||
+                    c == '\\' || c == '-' || c == '_' || c == '=')
+                {
+                    if (!prevdash && sb.Length > 0)
+                    {
+                        sb.Append('-');
+                        prevdash = true;
+                    }
+                }
+                else if ((int)c >= 128)
+                {
+                    int prevlen = sb.Length;
+                    sb.Append(RemapInternationalCharToAscii(c));
+                    if (prevlen != sb.Length) prevdash = false;
+                }
+                if (i == maxlen) break;
+            }
+
+            if (prevdash)
+                return sb.ToString().Substring(0, sb.Length - 1);
+            else
+                return sb.ToString();
         }
 
         public static string RemapInternationalCharToAscii(char c)

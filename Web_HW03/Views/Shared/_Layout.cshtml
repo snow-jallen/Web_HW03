@@ -75,7 +75,11 @@
         </script>
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     @RenderSection("Scripts", required: false)
+    <script>tinymce.init({
+        selector:'textarea',
+        plugins: ["image"]
+    });</script>
 </body>
 </html>
