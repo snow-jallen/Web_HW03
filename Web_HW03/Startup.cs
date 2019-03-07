@@ -39,13 +39,14 @@ namespace Web_HW03
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite("Data Source=myappdata.sqlite"));
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddDefaultIdentity<IdentityUser>()                
             //    .AddDefaultUI(UIFramework.Bootstrap4)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddDefaultTokenProviders()
                 .AddDefaultUI(UIFramework.Bootstrap4)                
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
