@@ -19,16 +19,16 @@ namespace Web_HW03.Data
             base.OnModelCreating(builder);
 
             builder.Entity<PostTag>()
-                .HasKey(t => new { t.PostId, t.TagId });
+                .HasKey(boatyMcBoatface => new { boatyMcBoatface.PostId, boatyMcBoatface.TagId });
 
             builder.Entity<PostTag>()
                 .HasOne(pt => pt.Post)
-                .WithMany(p => p.PostTags)
+                    .WithMany(p => p.PostTags)
                 .HasForeignKey(pt => pt.PostId);
-
+            
             builder.Entity<PostTag>()
                 .HasOne(pt => pt.Tag)
-                .WithMany(t => t.PostTags)
+                    .WithMany(t => t.PostTags)
                 .HasForeignKey(pt => pt.TagId);
         }
         public DbSet<BlogPost> BlogPosts { get; set; }

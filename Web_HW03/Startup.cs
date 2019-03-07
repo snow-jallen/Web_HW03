@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
+
 namespace Web_HW03
 {
     public class Startup
@@ -37,8 +38,7 @@ namespace Web_HW03
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite("blogdb.sqlite"));
 
             //services.AddDefaultIdentity<IdentityUser>()                
             //    .AddDefaultUI(UIFramework.Bootstrap4)

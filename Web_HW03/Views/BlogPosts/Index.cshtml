@@ -37,7 +37,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td><!-- anything after asp-route-* shows up as a parameter with that name.  -->
                     <a asp-action="Friendly" asp-route-slug="@item.URLFriendly">@item.Title</a>
                 </td>
                 <td>

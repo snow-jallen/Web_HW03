@@ -165,7 +165,6 @@ namespace Web_HW03.Models
 
     public class PostTag
     {
-        public int Id { get; set; }
         public int PostId { get; set; }
         public BlogPost Post { get; set; }
         public int TagId { get; set; }
